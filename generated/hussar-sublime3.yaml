@@ -1,0 +1,81 @@
+%YAML 1.2
+---
+name: hussar
+scope: source.hussar
+file_extensions: [ hss ]
+
+contexts:
+  main:
+    - match: '(//.*)'
+      captures:
+        0: comment.hussar
+    - match: '(while|if|else|return|let|mut|fn|var)'
+      captures:
+        0: keyword.control.hussar
+    - match: '(true|false)'
+      captures:
+        0: constant.language.hussar
+    - match: '(\b[a-zA-Z][a-zA-Z0-9]*)'
+      captures:
+        0: variable.hussar
+    - include: numeric
+    - match: '(\{)'
+      captures:
+        0: punctuation.hussar
+      push: 
+        - match: '(\})'
+          pop: true
+          captures:
+            0: punctuation.hussar
+        - include: main
+        - match: '(.)'
+          captures:
+            0: text.hussar
+    - match: '(;)'
+      captures:
+        0: punctuation.hussar
+    - match: '(\+|-|\*|/)'
+      captures:
+        0: punctuation.hussar
+    - match: '(=)'
+      captures:
+        0: punctuation.hussar
+    - match: '(\")'
+      captures:
+        0: punctuation.hussar
+      push: 
+        - match: '(\")'
+          pop: true
+          captures:
+            0: punctuation.hussar
+        - match: '(.)'
+          captures:
+            0: string.hussar
+    - match: '(\()'
+      captures:
+        0: punctuation.hussar
+      push: 
+        - match: '(\))'
+          pop: true
+          captures:
+            0: punctuation.hussar
+        - include: numeric
+        - match: '(,)'
+          captures:
+            0: punctuation.hussar
+        - match: '(.)'
+          captures:
+            0: text.hussar
+    - match: '([^\s])'
+      captures:
+        0: invalid.illegal.hussar
+    - match: '(.)'
+      captures:
+        0: text.hussar
+  numeric:
+    - match: '(\b\d+)'
+      captures:
+        0: constant.numeric.hussar
+    - match: '(.)'
+      captures:
+        0: text.hussar
