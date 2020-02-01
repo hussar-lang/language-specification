@@ -1,6 +1,12 @@
 #################################################################
 ## Hussar
-################################################################ 
+##
+## revision v0.1.0
+## last edited 01/02/2020
+##
+#################################################################
+## Edit in Iro editor: https://eeyo.io/iro/
+################ 
 ##
 ## * Press Ctrl + '+'/'-' To Zoom in
 ## * Press Ctrl + S to save and recalculate... 
@@ -25,7 +31,7 @@ file_extensions []     = hss;
 ## Constants
 ################################################################
 
-__MY_CONSTANT \= (\b[a-z][a-z0-9]*)
+__MY_CONSTANT \= (\b[a-zA-Z][a-zA-Z0-9]*)
 
 ################################################################
 ## Styles
@@ -36,44 +42,50 @@ styles [] {
 .comment : style {
    color                 = light_green
    italic                = true
-   ace_scope             = comment
    textmate_scope        = comment
    pygments_scope        = Comment
 }
 
 .keyword : style {
    color     = cyan
-   ace_scope             = keyword
-   textmate_scope        = keyword
-   pygments_scope        = Keyword
+   textmate_scope        = keyword.control
+   pygments_scope        = Keyword.Reserved
+}
+
+.symbol : style {
+   color = purple
+   textmate_scope = variable
+   pygments_scope = Name.Variable
+}
+
+.constant : style {
+   color = green
+   textmate_scope = constant.language
+   pygments_scope = Literal
 }
 
 .numeric : style {
    color                 = gold
-   ace_scope             = constant.numeric
    textmate_scope        = constant.numeric
    pygments_scope        = Number
 }
 
 .punctuation : style {
    color     = red_2
-   ace_scope             = punctuation
    textmate_scope        = punctuation
    pygments_scope        = Punctuation
 }
 
 .text : style {
    color                 = yellow
-   ace_scope             = text
-   textmate_scope        = text
+   textmate_scope        = string
    pygments_scope        = String
 }
 
 .illegal : style {
    color                 = white
    background_color      = red
-   ace_scope             = invalid
-   textmate_scope        = invalid
+   textmate_scope        = invalid.illegal
    pygments_scope        = Generic.Error
 }
 
@@ -92,8 +104,23 @@ contexts [] {
 main : context {
 
    : pattern {
-      regex          \= $${__MY_CONSTANT}
+      regex          \= (//.*)
+      styles []       = .comment;
+   }
+   
+   : pattern {
+      regex          \= (while|if|else|return|let|mut|fn|var)
       styles []       = .keyword;
+   }
+   
+   : pattern {
+      regex          \= (true|false)
+      styles []       = .constant;
+   }
+   
+   : pattern {
+      regex          \= $${__MY_CONSTANT}
+      styles []       = .symbol;
    }
    
    : include "numeric" ;
@@ -110,6 +137,16 @@ main : context {
    
    : pattern {
       regex          \= (;)
+      styles []       = .punctuation;
+   }
+   
+   : pattern {
+      regex          \= (\+|-|\*|/)
+      styles []       = .punctuation;
+   }
+   
+   : pattern {
+      regex          \= (=)
       styles []       = .punctuation;
    }
    
@@ -137,13 +174,6 @@ main : context {
       }
    }
    
-   : include "multi_line_comment" ;
-   
-   : pattern {
-      regex          \= (//.*)
-      styles []       = .comment;
-   }
-   
    : pattern {
       regex          \= ([^\s])
       styles []       = .illegal;
@@ -163,23 +193,6 @@ numeric : context {
    : pattern {
       regex          \= (\b\d+)
       styles []       = .numeric;
-   }
-}
-
-###########################################
-## Multi Line Comment Context
-###########################################
-
-multi_line_comment : context {
-   description        = multiline
-   : inline_push {
-      regex          \= (/\*)
-      styles []       = .comment;
-      default_style   = .comment
-      : pop {
-         regex       \= (\*/)
-         styles []    = .comment;
-      }
    }
 }
    
